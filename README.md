@@ -1,4 +1,4 @@
-# cartalogue
+# Cartalogue
 
 A new Flutter project.
 
