@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   auto_route: ^7.8.4
-
+  http: ^0.13.6
 
   # For using icons like CupertinoIcons (iOS-style)
   cupertino_icons: ^1.0.8

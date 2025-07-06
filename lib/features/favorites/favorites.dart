@@ -1,5 +1,5 @@
 // lib/features/favorites/favorites_screen.dart
-
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,8 +24,9 @@ class FavoritesNotifier extends StateNotifier<Set<int>> {
 }
 
 /// Main favorites screen
-class FavoritesScreen extends ConsumerWidget {
-  const FavoritesScreen({super.key});
+@RoutePage()
+class FavoritesPage extends ConsumerWidget {
+  const FavoritesPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

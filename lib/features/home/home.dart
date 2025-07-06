@@ -1,9 +1,13 @@
+import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:cartalogue/core/router/app_router.dart';
+import 'package:cartalogue/features/favorites/favorites.dart';
 import 'package:flutter/material.dart';
-import 'package:cartalogue/features/edit_product/edit.dart';
-import 'package:cartalogue/features/favorites/favorites.dart'; // <-- Import FavoritesScreen
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+
+@RoutePage()
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -168,12 +172,8 @@ class HomeScreen extends StatelessWidget {
                                 padding: const EdgeInsets.all(4),
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const EditProduct(),
-                                      ),
-                                    );
+                                    context.pushRoute(const EditRoute());
+
                                   },
                                   child: const Icon(Icons.edit, color: Colors.white, size: 16),
                                 ),
@@ -208,12 +208,7 @@ class HomeScreen extends StatelessWidget {
           unselectedItemColor: Color(0xFFCA907E),
           onTap: (index) {
             if (index == 1) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const FavoritesScreen(),
-                ),
-              );
+              context.pushRoute(const FavoritesRoute());
             }
           },
           items: const [

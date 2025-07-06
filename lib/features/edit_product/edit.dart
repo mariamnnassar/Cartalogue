@@ -1,13 +1,15 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 
-class EditProduct extends StatefulWidget {
-  const EditProduct({super.key});
+@RoutePage()
+class EditPage extends StatefulWidget {
+  const EditPage({super.key});
 
   @override
-  State<EditProduct> createState() => _EditProductState();
+  State<EditPage> createState() => _EditProductState();
 }
 
-class _EditProductState extends State<EditProduct> {
+class _EditProductState extends State<EditPage> {
   bool isFavorite = false;
 
   @override
