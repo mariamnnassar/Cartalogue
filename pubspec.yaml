@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  auto_route: ^7.8.4
+
 
   # For using icons like CupertinoIcons (iOS-style)
   cupertino_icons: ^1.0.8
@@ -23,11 +25,18 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  auto_route_generator: ^7.3.1
+  build_runner: ^2.4.7
   flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
   assets:
     - assets/
+
+  fonts:
+    - family: Archivo
+      fonts:
+        - asset: assets/fonts/Archivo-Regular.ttf
+        - asset: assets/fonts/Archivo-SemiBold.ttf
 
