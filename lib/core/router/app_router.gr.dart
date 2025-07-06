@@ -16,9 +16,13 @@ abstract class _$AppRouter extends RootStackRouter {
   @override
   final Map<String, PageFactory> pagesMap = {
     EditRoute.name: (routeData) {
+      final args = routeData.argsAs<EditRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const EditPage(),
+        child: EditPage(
+          key: args.key,
+          product: args.product,
+        ),
       );
     },
     FavoritesRoute.name: (routeData) {
@@ -38,16 +42,39 @@ abstract class _$AppRouter extends RootStackRouter {
 
 /// generated route for
 /// [EditPage]
-class EditRoute extends PageRouteInfo<void> {
-  const EditRoute({List<PageRouteInfo>? children})
-      : super(
+class EditRoute extends PageRouteInfo<EditRouteArgs> {
+  EditRoute({
+    Key? key,
+    required Product product,
+    List<PageRouteInfo>? children,
+  }) : super(
           EditRoute.name,
+          args: EditRouteArgs(
+            key: key,
+            product: product,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'EditRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<EditRouteArgs> page = PageInfo<EditRouteArgs>(name);
+}
+
+class EditRouteArgs {
+  const EditRouteArgs({
+    this.key,
+    required this.product,
+  });
+
+  final Key? key;
+
+  final Product product;
+
+  @override
+  String toString() {
+    return 'EditRouteArgs{key: $key, product: $product}';
+  }
 }
 
 /// generated route for

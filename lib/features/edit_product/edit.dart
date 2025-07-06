@@ -1,9 +1,13 @@
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
+import 'package:cartalogue/models/product.dart';
+
 
 @RoutePage()
 class EditPage extends StatefulWidget {
-  const EditPage({super.key});
+  final Product product;
+
+  const EditPage({super.key, required this.product});
 
   @override
   State<EditPage> createState() => _EditProductState();
