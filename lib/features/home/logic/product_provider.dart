@@ -1,36 +1,27 @@
-// lib/features/home/logic/product_provider.dart
-
-import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:cartalogue/models/product.dart';
+import 'package:cartalogue/services/api_service.dart';
 
-/// 🔁 A StateNotifier to manage the list of products (GET and PUT)
-class ProductNotifier extends StateNotifier<List<Product>> {
-  ProductNotifier() : super([]);
-
-  /// 📦 Fetch products from the API
-  Future<void> fetchProducts() async {
-    final response = await http.get(Uri.parse('https://fakestoreapi.com/products'));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      state = data.map((e) => Product.fromJson(e)).toList();
-    } else {
-      throw Exception('Failed to load products');
-    }
+// 🟣 AsyncNotifier for managing product list with loading/error states
+class ProductNotifier extends AsyncNotifier<List<Product>> {
+  @override
+  Future<List<Product>> build() async {
+    return await ApiService.fetchProducts();
   }
 
-  /// ✏️ Update a product in local state after editing
-  void updateProduct(Product updatedProduct) {
-    state = [
-      for (final product in state)
-        if (product.id == updatedProduct.id) updatedProduct else product
-    ];
+  // Update product and refresh state
+  Future<void> updateProductApi(Product updatedProduct) async {
+    final updated = await ApiService.updateProduct(updatedProduct.id, updatedProduct);
+
+    // Replace the product in state with updated version
+    state = AsyncData([
+      for (final product in state.value ?? [])
+        if (product.id == updated.id) updated else product
+    ]);
   }
 }
 
-/// 📌 Provider to expose the ProductNotifier state
-final productProvider = StateNotifierProvider<ProductNotifier, List<Product>>(
-      (ref) => ProductNotifier(),
+// ✅ Provider to use in UI
+final productProvider = AsyncNotifierProvider<ProductNotifier, List<Product>>(
+  ProductNotifier.new,
 );

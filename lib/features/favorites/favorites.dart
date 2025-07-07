@@ -1,14 +1,15 @@
-// lib/features/favorites/favorites_screen.dart
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cartalogue/features/home/logic/product_provider.dart';
+import 'package:cartalogue/models/product.dart';
 
-/// Provider to hold favorite product IDs (for simplicity)
+/// Riverpod provider for favorite product IDs
 final favoritesProvider = StateNotifierProvider<FavoritesNotifier, Set<int>>(
       (ref) => FavoritesNotifier(),
 );
 
-/// Manages add/remove favorites
+/// Notifier to manage adding/removing favorite IDs
 class FavoritesNotifier extends StateNotifier<Set<int>> {
   FavoritesNotifier() : super({});
 
@@ -23,7 +24,7 @@ class FavoritesNotifier extends StateNotifier<Set<int>> {
   bool isFavorite(int productId) => state.contains(productId);
 }
 
-/// Main favorites screen
+/// Main Favorites Page
 @RoutePage()
 class FavoritesPage extends ConsumerWidget {
   const FavoritesPage({super.key});
@@ -31,6 +32,16 @@ class FavoritesPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final favoriteIds = ref.watch(favoritesProvider);
+    final productsAsync = ref.watch(productProvider);
+
+    // Extract the products that are marked as favorites
+    final favoriteProducts = productsAsync.when(
+      data: (allProducts) => allProducts
+          .where((product) => favoriteIds.contains(product.id))
+          .toList(),
+      loading: () => [],
+      error: (_, __) => [],
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -49,8 +60,10 @@ class FavoritesPage extends ConsumerWidget {
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: GridView.builder(
-          itemCount: favoriteIds.length,
+        child: favoriteProducts.isEmpty
+            ? const Center(child: Text('No favorite products yet.'))
+            : GridView.builder(
+          itemCount: favoriteProducts.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 16,
@@ -58,12 +71,9 @@ class FavoritesPage extends ConsumerWidget {
             childAspectRatio: 0.6,
           ),
           itemBuilder: (context, index) {
-            final productId = favoriteIds.elementAt(index);
+            final product = favoriteProducts[index];
             return ProductCard(
-              id: productId,
-              title: 'Product $productId',
-              price: 20.0 + index,
-              imageUrl: '', // placeholder
+              product: product,
             );
           },
         ),
@@ -72,24 +82,18 @@ class FavoritesPage extends ConsumerWidget {
   }
 }
 
-/// Product card used in favorites grid
+/// Reusable product card used in the favorites grid
 class ProductCard extends ConsumerWidget {
-  final int id;
-  final String title;
-  final double price;
-  final String imageUrl;
+  final Product product;
 
   const ProductCard({
     super.key,
-    required this.id,
-    required this.title,
-    required this.price,
-    required this.imageUrl,
+    required this.product,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isFavorite = ref.watch(favoritesProvider).contains(id);
+    final isFavorite = ref.watch(favoritesProvider).contains(product.id);
     final toggleFavorite = ref.read(favoritesProvider.notifier).toggleFavorite;
 
     return Container(
@@ -102,7 +106,7 @@ class ProductCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Product Image placeholder
+          // Product image placeholder
           Expanded(
             child: Container(
               width: double.infinity,
@@ -114,9 +118,11 @@ class ProductCard extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
 
-          // Product Info
+          // Product title & price
           Text(
-            title,
+            product.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -124,7 +130,7 @@ class ProductCard extends ConsumerWidget {
             ),
           ),
           Text(
-            '\u20AC$price',
+            '${product.price.toStringAsFixed(2)} JOD',
             style: const TextStyle(
               fontSize: 12,
               color: Colors.black87,
@@ -132,7 +138,7 @@ class ProductCard extends ConsumerWidget {
             ),
           ),
 
-          // Favorite icon
+          // Favorite toggle
           Align(
             alignment: Alignment.bottomRight,
             child: IconButton(
@@ -140,7 +146,7 @@ class ProductCard extends ConsumerWidget {
                 isFavorite ? Icons.favorite : Icons.favorite_border,
                 color: isFavorite ? const Color(0xFFCA907E) : Colors.grey,
               ),
-              onPressed: () => toggleFavorite(id),
+              onPressed: () => toggleFavorite(product.id),
             ),
           ),
         ],

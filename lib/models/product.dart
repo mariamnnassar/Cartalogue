@@ -17,6 +17,22 @@ class Product {
     required this.image,
   });
 
+  Product copyWith({
+    int? id,
+    String? title,
+    String? description,
+    double? price,
+    String? image,
+  }) {
+    return Product(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      price: price ?? this.price,
+      image: image ?? this.image, category: '',
+    );
+  }
+
   // Factory to create Product from JSON
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
