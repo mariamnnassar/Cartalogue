@@ -6,6 +6,7 @@ import 'package:cartalogue/features/favorites/favorites.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 @RoutePage()
 class EditPage extends ConsumerStatefulWidget {
@@ -21,7 +22,6 @@ class _EditPageState extends ConsumerState<EditPage> {
   late TextEditingController titleController;
   late TextEditingController descriptionController;
   late TextEditingController priceController;
-
   late bool isFavorite;
 
   @override
@@ -31,7 +31,6 @@ class _EditPageState extends ConsumerState<EditPage> {
     descriptionController = TextEditingController(text: widget.product.description);
     priceController = TextEditingController(text: widget.product.price.toString());
 
-    // Check if this product is already a favorite
     final favorites = ref.read(favoritesProvider);
     isFavorite = favorites.contains(widget.product.id);
   }
@@ -52,7 +51,7 @@ class _EditPageState extends ConsumerState<EditPage> {
 
     if (title.isEmpty || desc.isEmpty || price == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields correctly')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.fillFieldsError)),
       );
       return;
     }
@@ -64,10 +63,8 @@ class _EditPageState extends ConsumerState<EditPage> {
     );
 
     try {
-      // 🔁 Update product in the API and locally
       await ref.read(productProvider.notifier).updateProductApi(updatedProduct);
 
-      // 🧠 Update favorites if needed
       final favNotifier = ref.read(favoritesProvider.notifier);
       final isFav = ref.read(favoritesProvider).contains(updatedProduct.id);
 
@@ -77,12 +74,9 @@ class _EditPageState extends ConsumerState<EditPage> {
         favNotifier.toggleFavorite(updatedProduct.id);
       }
 
-      // 🔄 Refresh products
-      ref.invalidate(productProvider);
-
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Product updated ✅')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.productUpdated)),
         );
         context.popRoute();
       }
@@ -95,15 +89,17 @@ class _EditPageState extends ConsumerState<EditPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0x99CA907E),
         centerTitle: true,
-        title: const Text(
-          'EDIT PRODUCT',
-          style: TextStyle(
+        title: Text(
+          localization.editProduct,
+          style: const TextStyle(
             fontFamily: 'Archivo',
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -116,13 +112,11 @@ class _EditPageState extends ConsumerState<EditPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🖼️ Product image with fallback SVG
+            // 🖼️ Product image
             Container(
               height: 180,
               width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
               child: (widget.product.image.isNotEmpty)
                   ? ClipRRect(
                 borderRadius: BorderRadius.circular(12),
@@ -147,17 +141,17 @@ class _EditPageState extends ConsumerState<EditPage> {
 
             const SizedBox(height: 24),
 
-            // 📝 Title field
-            const Text(
-              'Title',
-              style: TextStyle(fontFamily: 'Archivo', color: Color(0xFF91654B)),
+            // 📝 Title
+            Text(
+              localization.titleLabel,
+              style: const TextStyle(fontFamily: 'Archivo', color: Color(0xFF91654B)),
             ),
             const SizedBox(height: 4),
             TextFormField(
               controller: titleController,
-              decoration: const InputDecoration(
-                hintText: 'e.g. Cotton T-Shirt',
-                border: OutlineInputBorder(
+              decoration: InputDecoration(
+                hintText: localization.titleHint,
+                border: const OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
               ),
@@ -165,17 +159,17 @@ class _EditPageState extends ConsumerState<EditPage> {
             const SizedBox(height: 16),
 
             // 📝 Description
-            const Text(
-              'Description',
-              style: TextStyle(fontFamily: 'Archivo', color: Color(0xFF91654B)),
+            Text(
+              localization.descriptionLabel,
+              style: const TextStyle(fontFamily: 'Archivo', color: Color(0xFF91654B)),
             ),
             const SizedBox(height: 4),
             TextFormField(
               controller: descriptionController,
               maxLines: 3,
-              decoration: const InputDecoration(
-                hintText: 'e.g. Soft cotton with round neck',
-                border: OutlineInputBorder(
+              decoration: InputDecoration(
+                hintText: localization.descriptionHint,
+                border: const OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
               ),
@@ -183,28 +177,28 @@ class _EditPageState extends ConsumerState<EditPage> {
             const SizedBox(height: 16),
 
             // 💲 Price
-            const Text(
-              'Price',
-              style: TextStyle(fontFamily: 'Archivo', color: Color(0xFF91654B)),
+            Text(
+              localization.priceLabel,
+              style: const TextStyle(fontFamily: 'Archivo', color: Color(0xFF91654B)),
             ),
             const SizedBox(height: 4),
             TextFormField(
               controller: priceController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                hintText: 'e.g. 20.00',
-                border: OutlineInputBorder(
+              decoration: InputDecoration(
+                hintText: localization.priceHint,
+                border: const OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
               ),
             ),
             const SizedBox(height: 24),
 
-            // ✅ Save and Favorite buttons
+            // ✅ Buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // ❤️ Toggle favorite
+                // ❤️ Favorite toggle
                 IconButton(
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -214,6 +208,7 @@ class _EditPageState extends ConsumerState<EditPage> {
                     setState(() {
                       isFavorite = !isFavorite;
                     });
+                    ref.read(favoritesProvider.notifier).toggleFavorite(widget.product.id);
                   },
                 ),
 
@@ -227,9 +222,9 @@ class _EditPageState extends ConsumerState<EditPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(
+                  child: Text(
+                    localization.saveButton,
+                    style: const TextStyle(
                       fontFamily: 'Archivo',
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

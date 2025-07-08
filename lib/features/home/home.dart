@@ -2,13 +2,14 @@
 
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:cartalogue/core/localization/locale_provider.dart';
 import 'package:cartalogue/core/router/app_router.dart';
-import 'package:cartalogue/features/favorites/favorites.dart';
 import 'package:cartalogue/features/home/logic/product_provider.dart';
 import 'package:cartalogue/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 @RoutePage()
 class HomePage extends ConsumerStatefulWidget {
@@ -20,25 +21,21 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   @override
-  void initState() {
-    super.initState();
-    // ✅ Fetch products automatically using AsyncNotifier's build method
-  }
-
-  @override
   Widget build(BuildContext context) {
     final productsAsync = ref.watch(productProvider);
+    final locale = ref.watch(localeProvider);
+    final localization = AppLocalizations.of(context)!;
+    final isArabic = locale.languageCode == 'ar';
 
     return Scaffold(
       backgroundColor: Colors.white,
-
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🌐 Language switcher (currently static)
+              // 🌐 Language toggle switch
               Align(
                 alignment: Alignment.topRight,
                 child: Row(
@@ -46,8 +43,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                   children: [
                     const Text("EN"),
                     Switch(
-                      value: true,
-                      onChanged: (val) {},
+                      value: isArabic,
+                      onChanged: (val) {
+                        ref.read(localeProvider.notifier).state =
+                        val ? const Locale('ar') : const Locale('en');
+                      },
                       activeColor: const Color(0xFFCA907E),
                     ),
                     const Text("AR"),
@@ -57,10 +57,10 @@ class _HomePageState extends ConsumerState<HomePage> {
 
               const SizedBox(height: 12),
 
-              // 🅰️ App name
-              const Text(
-                "Cartalogue",
-                style: TextStyle(
+              // 🅰️ App title
+              Text(
+                localization.appTitle,
+                style: const TextStyle(
                   fontSize: 34,
                   fontFamily: 'Archivo',
                   color: Color(0xFFCA907E),
@@ -78,9 +78,9 @@ class _HomePageState extends ConsumerState<HomePage> {
               const SizedBox(height: 4),
 
               // 📝 Subtitle
-              const Text(
-                "Quick and smart product detail editing🌟",
-                style: TextStyle(
+              Text(
+                localization.subtitle,
+                style: const TextStyle(
                   fontSize: 13,
                   color: Colors.black,
                   fontFamily: 'Archivo',
@@ -88,19 +88,13 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
 
               const SizedBox(height: 12),
-
-              // Divider
-              const Divider(
-                thickness: 1,
-                color: Color(0xFF91654B),
-              ),
-
+              const Divider(thickness: 1, color: Color(0xFF91654B)),
               const SizedBox(height: 12),
 
-              // Section Title
-              const Text(
-                "Explore Products",
-                style: TextStyle(
+              // 📦 Section title
+              Text(
+                localization.exploreProducts,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Archivo',
@@ -110,7 +104,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
               const SizedBox(height: 12),
 
-              // 🧱 Products grid OR loading/error
+              // 🧱 Products grid
               Expanded(
                 child: productsAsync.when(
                   data: (products) => GridView.builder(
@@ -135,7 +129,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // 🖼️ Product image or SVG fallback
+                            // 🖼️ Product image or placeholder
                             Container(
                               height: 160,
                               width: double.infinity,
@@ -167,7 +161,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                             const SizedBox(height: 8),
 
-                            // 📄 Title & Price
+                            // 📄 Product title & price
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 8),
                               child: Column(
@@ -197,7 +191,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                             const Spacer(),
 
-                            // ✏️ Edit Button
+                            // ✏️ Edit button
                             Padding(
                               padding: const EdgeInsets.only(right: 8, bottom: 8),
                               child: Align(
@@ -231,7 +225,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
       ),
 
-      // 🔻 Bottom Navigation
+      // 🔻 Bottom Navigation Bar
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: Color(0x99CA907E),

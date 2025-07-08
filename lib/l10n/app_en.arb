@@ -1,0 +1,23 @@
+{
+  "@@locale": "en",
+  "appTitle": "Cartalogue",
+  "favoritesTitle": "Favorites",
+  "editProductTitle": "Edit Product",
+  "noFavorites": "No favorite products yet.",
+  "save": "Save",
+  "title": "Title",
+  "description": "Description",
+  "price": "Price",
+  "exploreProducts": "Explore Products",
+  "subtitle": "Quick and smart product detail editing🌟",
+  "editProduct": "EDIT PRODUCT",
+  "titleLabel": "Title",
+  "titleHint": "e.g. Cotton T-Shirt",
+  "descriptionLabel": "Description",
+  "descriptionHint": "e.g. Soft cotton with round neck",
+  "priceLabel": "Price",
+  "priceHint": "e.g. 20.00",
+  "saveButton": "Save",
+  "fillFieldsError": "Please fill all fields correctly",
+  "productUpdated": "Product updated ✅"
+}
