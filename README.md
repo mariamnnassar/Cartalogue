@@ -89,16 +89,16 @@ Mariam Nassar
 Screenshots
 
 ###  Home Page
-![Home](assets/images/app_screens/1.png)
+<img src="assets/images/app_screens/1.png" alt="Home" width="300"/>
 
-### Home page translated to Arabic using localization
-![Home](assets/images/app_screens/2.png)
+###  Home Page (Arabic - Localized)
+<img src="assets/images/app_screens/2.png" alt="Home Arabic" width="300"/>
 
 ###  Edit Page
-![Edit](assets/images/app_screens/3.png)
+<img src="assets/images/app_screens/3.png" alt="Edit" width="300"/>
 
 ###  Favorites Page
-![Favorites](assets/images/app_screens/4.png)
+<img src="assets/images/app_screens/4.png" alt="Favorites" width="300"/>
 
 
 
